@@ -1,40 +1,9 @@
 import { CaretRight, DiscordLogo, FileArrowDown, Lightning } from "phosphor-react";
 import {DefaultUi, Player, Youtube} from '@vime/react'; 
 
-import '@vime/core/themes/default.css';
-import { VideoProps } from "@vime/react/dist/types/components/Video";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/client";
+import { useGetLessonBySlugQuery } from "../graphql/generated";
 
 
-
-const GET_LESSON_BY_SLUG_QUERY = gql`
-query GetLessonBySlug ($slug: String) {
-  lesson(where: {slug: $slug}) {
-    videoId
-    description
-    title
-    teacher {
-      bio
-      avatarURL
-      name
-    }
-  }
-}
-`
-
-interface GetLessonBySlugResponse {
-  lesson: {
-    title: string; 
-    videoId: string;
-    description: string; 
-    teacher: {
-      bio: string; 
-      avartarURL: string;
-      name: string; 
-    } 
-  }
-}
 
 interface VideoProps{
   lessonSlug: string; 
@@ -42,14 +11,14 @@ interface VideoProps{
 
 export function Video(props: VideoProps) {
 
-  const {data} = useQuery<GetLessonBySlugResponse>(GET_LESSON_BY_SLUG_QUERY, {
+  const {data} = useGetLessonBySlugQuery({
     variables: {
       slug:props.lessonSlug, 
     }
   })
 
 
-  if (!data) {
+  if (!data || !data.lesson) {
     return (
       <div className="flex-1">
         //TODO: spinner
@@ -94,22 +63,24 @@ export function Video(props: VideoProps) {
                   </div>
                 </div>
 
-                
-              <div className="flex items-center gap-4 mt-6">
-                <img 
-                className="h-16 w-16 rounded-full border-2 border-blue-500"
-                src="https://github.com/csrap.png" 
-                alt=""/>
-
-                <div className="leading-relaxed">
-                  <strong
-                  className="font-blod text-2xl block"
-                  >{data.lesson.teacher.name}</strong>
-                  <span
-                  className="text-gray-200 text-sm block"
-                  >{data.lesson.teacher.bio}</span>
-                </div>
-          </div>
+                {data.lesson.teacher && (
+                      <div className="flex items-center gap-4 mt-6">
+                        <img 
+                        className="h-16 w-16 rounded-full border-2 border-blue-500"
+                        src="https://github.com/csrap.png" 
+                        alt=""/>
+        
+                        <div className="leading-relaxed">
+                          <strong
+                          className="font-blod text-2xl block"
+                          >{data.lesson.teacher.name}</strong>
+                          <span
+                          className="text-gray-200 text-sm block"
+                          >{data.lesson.teacher.bio}</span>
+                        </div>
+                    </div>
+                )}
+        
           <div className="gap-8 mt-20 grid grid-cols-2">
             <a href=""
             className="bg-gray-700 rounded overflow-hidden flex items-stretch gap-6 hover:bg-gray-600 transition-colors">
