@@ -3,7 +3,7 @@ import {DefaultUi, Player, Youtube} from '@vime/react';
 
 import { useGetLessonBySlugQuery } from "../graphql/generated";
 
-
+import '@vime/core/themes/default.css'; 
 
 interface VideoProps{
   lessonSlug: string; 
