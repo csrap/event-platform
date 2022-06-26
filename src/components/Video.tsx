@@ -4,6 +4,7 @@ import {DefaultUi, Player, Youtube} from '@vime/react';
 import { useGetLessonBySlugQuery } from "../graphql/generated";
 
 import '@vime/core/themes/default.css'; 
+import Loader from "./Loader";
 
 interface VideoProps{
   lessonSlug: string; 
@@ -21,8 +22,7 @@ export function Video(props: VideoProps) {
   if (!data || !data.lesson) {
     return (
       <div className="flex-1">
-        //TODO: spinner
-        <p>Carregando....</p>
+          <Loader/>
       </div>
     )
   }
